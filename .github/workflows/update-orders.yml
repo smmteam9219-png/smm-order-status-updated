@@ -1,0 +1,16 @@
+name: Update Order Status
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  update-order-status:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Call Order Status Cron
+        run: |
+          curl -L --fail --max-time 120 \
+          "https://apnasmm.site.je/crons/orders.php"
