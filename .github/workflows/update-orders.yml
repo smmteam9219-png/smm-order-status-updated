@@ -10,13 +10,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Call Order Status Cron
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Playwright
         run: |
-          curl -4 -L \
-            --fail \
-            --retry 3 \
-            --retry-delay 5 \
-            --connect-timeout 30 \
-            --max-time 120 \
-            -A "Mozilla/5.0" \
-            "https://apnasmm.site.je/crons/orders.php"
+          npm install playwright
+          npx playwright install --with-deps chromium
+
+      - name: Run Order Status Cron
+        run: |
+          node - <<'EOF'
+          const { chromium } = require('playwright');
+
+          (async () => {
+            const browser = await chromium.launch({headless: true});
+            const page = await browser.newPage();
+
+            await page.goto(
+              'https://apnasmm.site.je/crons/orders.php',
+              { waitUntil: 'networkidle', timeout: 120000 }
+            );
+
+            console.log(await page.textContent('body'));
+
+            await browser.close();
+          })();
+          EOF
