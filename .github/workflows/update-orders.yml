@@ -12,5 +12,4 @@ jobs:
     steps:
       - name: Call Order Status Cron
         run: |
-          curl -L --fail --max-time 120 \
-          "https://apnasmm.site.je/crons/orders.php"
+          curl -L --fail --max-time 120 "https://apnasmm.site.je/crons/orders.php"
